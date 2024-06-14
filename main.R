@@ -12,34 +12,56 @@ meta_url = c('https://hdrdata.org/api/Metadata/',
              '?apikey=')
 
 
-search_for_apikey = function(){
-  if (exists("HDR_API")==F){
-    print('No API key found, please create one as shown here: https://stackoverflow.com/a/58484278/5226332')
-  }
-}
+
+# get_meta = function(value, apikey){
+#   url = paste0(meta_url[1], value, meta_url[length(meta_url)], apikey)
+#   response = GET(url)
+#   if (response$status_code == 200){
+#     response = fromJSON(rawToChar(response$content))
+#     return(response)
+#   } else {
+#     print('Error, status code: ', response$status_code)
+#   }
+#   
+# }
+
 
 
 get_meta = function(value, apikey){
-  url = paste0(meta_url[1], value, meta_url[length(meta_url)], apikey)
-  response = GET(url)
+  
+  
+  req = request(paste0('https://hdrdata.org/api/Metadata/', value))
+  req = req_method(req, 'GET')
+  req = req_url_query(req,
+                      "apikey" = apikey
+                      )
+  
+  response = req_perform(req)
+  
   if (response$status_code == 200){
-    response = fromJSON(rawToChar(response$content))
+    response = fromJSON(rawToChar(response$body))
     return(response)
   } else {
     print('Error, status code: ', response$status_code)
   }
-  
 }
+
+
+get_meta('Indicators', HDR_API)
+
+
+
 
 
 metadata = lapply(meta_url[2:(length(meta_url)-1)], function(meta_item){
   get_meta(meta_item, HDR_API)
 })
 
-get_meta('HDRegion', HDR_API)
+# TODO : cache the result of the get_meta function upon launching the package
+# https://blog.r-hub.io/2021/07/30/cache/
+
 
 get_hdr_data = function(country_or_aggregation = NULL, year = NULL, indicator = NULL, apikey, query = NULL){
-  
   
   # sanity checks on country
   
