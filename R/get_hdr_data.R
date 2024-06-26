@@ -1,9 +1,9 @@
 #' Fetch data from HDR API
 #'
-#' @param country_or_aggregation 
-#' @param year numeric
-#' @param indicator str
-#' @param apikey str
+#' @param country_or_aggregation string or vector of strings: either 'all_countries' or an iso3 code
+#' @param year numeric or vector of numeric
+#' @param indicator str or vector of strings
+#' @param apikey str or vector of strings
 #' @param query default NULL, else 'detailed' for complete information
 #'
 #' @return a dataframe
