@@ -1,7 +1,3 @@
-library(httr2)
-library(jsonlite)
-
-# get data from human development report - main function ----
 #' Fetch data from HDR API
 #'
 #' @param country_or_aggregation 
@@ -103,26 +99,28 @@ get_hdr_data = function(country_or_aggregation = NULL, year = NULL, indicator = 
     base = 'https://hdrdata.org/api/CompositeIndices/query-detailed'
   }
   
-  req = request(base)
-  req = req_method(req, 'GET')
-  req = req_url_query(req,
-                      "apikey" = apikey,
-                      "countryOrAggregation" = paste(country_or_aggregation, collapse = ','),
-                      "year" = paste(year, collapse = ','),
-                      "indicator" = paste(indicator, collapse = ','))
+  req = httr2::request(base)
   
-  resp = req_perform(req)
+  req = httr2::req_method(req, 'GET')
+  
+  req = httr2::req_url_query(req,
+                            "apikey" = apikey,
+                            "countryOrAggregation" = paste(country_or_aggregation, collapse = ','),
+                            "year" = paste(year, collapse = ','),
+                            "indicator" = paste(indicator, collapse = ','))
+  
+  resp = httr2::req_perform(req)
   
   if(resp$status_code==200){
     
-    resp = fromJSON(rawToChar(resp$body))
+    resp = jsonlite::fromJSON(rawToChar(resp$body))
     
     return(resp)
     
   } else {
     
-    print(paste0("Error ", resp$status_code))
-    break
+    stop(paste0("Error ", resp$status_code))
+  
   }
   
 }

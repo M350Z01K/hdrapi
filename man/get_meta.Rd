@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_meta.R
 \name{get_meta}
 \alias{get_meta}
-\title{Title}
+\title{Get metadata from the human development report API}
 \usage{
 get_meta(value, apikey)
 }
@@ -15,7 +15,7 @@ get_meta(value, apikey)
 a dataframe
 }
 \description{
-Title
+Get metadata from the human development report API
 }
 \examples{
 country_list = get_meta(value = 'Countries', apikey = HDR_API)

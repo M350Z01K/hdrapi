@@ -1,7 +1,4 @@
-library(httr2)
-library(jsonlite)
-
-#' Title
+#' Get metadata from the human development report API
 #'
 #' @param value one from 'Countries', 'Indicators', 'HDGroups', 'HDRegions', 'Dimensions','Indices'
 #' @param apikey str
@@ -15,19 +12,19 @@ library(jsonlite)
 #' 
 get_meta = function(value, apikey){
   
-  req = request(paste0('https://hdrdata.org/api/Metadata/', value))
+  req = httr2::request(paste0('https://hdrdata.org/api/Metadata/', value))
   
-  req = req_method(req, 'GET')
+  req = httr2::req_method(req, 'GET')
   
-  req = req_url_query(req,
-                      "apikey" = apikey
+  req = httr2::req_url_query(req,
+                             "apikey" = apikey
   )
   
-  response = req_perform(req)
+  response = httr2::req_perform(req)
   
   if (response$status_code == 200){
   
-      response = fromJSON(rawToChar(response$body))
+      response = jsonlite::fromJSON(rawToChar(response$body))
     
       return(response)
       
