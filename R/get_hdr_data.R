@@ -1,67 +1,23 @@
 library(httr2)
 library(jsonlite)
 
-
-meta_url = c('https://hdrdata.org/api/Metadata/',
-             'Countries', 
-             'Indicators',
-             'HDGroups',
-             'HDRegions',
-             'Dimensions',
-             'Indices',
-             '?apikey=')
-
-
-
-# get_meta = function(value, apikey){
-#   url = paste0(meta_url[1], value, meta_url[length(meta_url)], apikey)
-#   response = GET(url)
-#   if (response$status_code == 200){
-#     response = fromJSON(rawToChar(response$content))
-#     return(response)
-#   } else {
-#     print('Error, status code: ', response$status_code)
-#   }
-#   
-# }
-
-
-
-get_meta = function(value, apikey){
-  
-  
-  req = request(paste0('https://hdrdata.org/api/Metadata/', value))
-  req = req_method(req, 'GET')
-  req = req_url_query(req,
-                      "apikey" = apikey
-                      )
-  
-  response = req_perform(req)
-  
-  if (response$status_code == 200){
-    response = fromJSON(rawToChar(response$body))
-    return(response)
-  } else {
-    print('Error, status code: ', response$status_code)
-  }
-}
-
-
-get_meta('Indicators', HDR_API)
-
-
-
-
-
-metadata = lapply(meta_url[2:(length(meta_url)-1)], function(meta_item){
-  get_meta(meta_item, HDR_API)
-})
-
-# TODO : cache the result of the get_meta function upon launching the package
-# https://blog.r-hub.io/2021/07/30/cache/
-
-
+# get data from human development report - main function ----
+#' Fetch data from HDR API
+#'
+#' @param country_or_aggregation 
+#' @param year numeric
+#' @param indicator str
+#' @param apikey str
+#' @param query default NULL, else 'detailed' for complete information
+#'
+#' @return a dataframe
+#' @export
+#'
+#' @examples
+#' get_hdr_data(country_or_aggregation = 'all_countries', apikey = HDR_API, indicator = 'co2_prod', query = 'detailed')
 get_hdr_data = function(country_or_aggregation = NULL, year = NULL, indicator = NULL, apikey, query = NULL){
+  
+  metadata = readRDS('data/metadata.rds')
   
   # sanity checks on country
   
@@ -91,17 +47,12 @@ get_hdr_data = function(country_or_aggregation = NULL, year = NULL, indicator = 
       
     }
     
-  
-    
-      
   }
   else {
     
     country_or_aggregation = ''
     
   }
-  
-  
   
   # sanity checks on year
   
@@ -113,7 +64,7 @@ get_hdr_data = function(country_or_aggregation = NULL, year = NULL, indicator = 
       
     } else {
       
-      stop('You provided a wrong value for year, check possible values in metadata')
+      stop('You provided a wrong value for year, range is [1950:2050]')
       
     }
   }
@@ -146,13 +97,11 @@ get_hdr_data = function(country_or_aggregation = NULL, year = NULL, indicator = 
     
   }
   
-  
   if (is.null(query)){
     base = 'https://hdrdata.org/api/CompositeIndices/query'
   } else {
     base = 'https://hdrdata.org/api/CompositeIndices/query-detailed'
   }
-  
   
   req = request(base)
   req = req_method(req, 'GET')
@@ -166,7 +115,6 @@ get_hdr_data = function(country_or_aggregation = NULL, year = NULL, indicator = 
   
   if(resp$status_code==200){
     
-    
     resp = fromJSON(rawToChar(resp$body))
     
     return(resp)
@@ -178,10 +126,3 @@ get_hdr_data = function(country_or_aggregation = NULL, year = NULL, indicator = 
   }
   
 }
-
-a = get_hdr_data(country_or_aggregation = 'all_countries', apikey = HDR_API, year = 2014, indicator = 'co2_prod', query = 'detailed')
-b = get_hdr_data(country_or_aggregation = 'MUS', apikey = HDR_API, year = 2014)
-c = get_hdr_data(country_or_aggregation = c('MUS', 'AGO', 'ARE'), apikey = HDR_API, year = c(2014, 2020), indicator = c('abr', 'co2_prod'))
-c = get_hdr_data(country_or_aggregation = c('MUS', 'AGO', 'ARE'), apikey = HDR_API, year = 2014)
-d = get_hdr_data(country_or_aggregation = 'MUS', apikey = HDR_API, year = 2014)
-

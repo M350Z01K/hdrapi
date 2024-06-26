@@ -1,0 +1,9 @@
+Package: hdrapi
+Type: Package
+Title: Easily fetch data from the Human Development Report API
+Version: 0.0.1.0
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
+RoxygenNote: 7.3.1
