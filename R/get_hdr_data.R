@@ -13,8 +13,6 @@
 #' get_hdr_data(country_or_aggregation = 'all_countries', apikey = HDR_API, indicator = 'co2_prod', query = 'detailed')
 get_hdr_data = function(country_or_aggregation = NULL, year = NULL, indicator = NULL, apikey, query = NULL){
   
-  metadata = readRDS('data/metadata.rds')
-  
   # sanity checks on country
   
   legal_countries = c(metadata[[1]][, 'code'], metadata[[3]][, 'code'], metadata[[4]][, 'code'])
