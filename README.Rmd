@@ -1,20 +1,28 @@
 ---
-title: "hdrapi in action"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{hdrapi in action}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+output: github_document
 ---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
 )
 ```
 
 # Easily access the Human Develpment Report Data via API
+
+## Installation
+
+You can install the development version of hdrapi from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("M350Z01K/hdrapi")
+```
 
 API documentation: https://hdr.undp.org/data-center/documentation-and-downloads
 
@@ -29,28 +37,24 @@ library(hdrapi)
 
 Described in the following [manual](https://hdr.undp.org/sites/default/files/2023-24_HDR/HDRO_data_api_manual.pdf)
 
-Store your api key in your .Rprofile as described [here](https://stackoverflow.com/questions/37700436/how-to-store-api-key-in-rprofile)
+Store your api key in your `.Rprofile` as described [here](https://stackoverflow.com/questions/37700436/how-to-store-api-key-in-rprofile)
 
-## Get an overview of the API
+## API overview
 
 Get a list of all indicators and search for a keyword:
 
 ```{r metadata_1}
-
 indicator_list = get_meta(value = 'Indicators',apikey =HDR_API)
 
 indicator_list[grep('education', indicator_list$name, ignore.case = T),]
-
 ```
 
 Get a list the countries and their isocodes. Search the code for a particular country (must be spelled right)
 
 ```{r metadata_2}
-
 country_list = get_meta(value = 'Countries', apikey = HDR_API)
 
 country_list[grep('mauritius', country_list$name, ignore.case = T),]
-
 ```
 
 
@@ -60,20 +64,17 @@ More information can be extracted by using the following values `HDGroups`, `HDR
 ## Query examples
 
 
-```{r get_hdr_data_co2}
-
+```{r get_hdr_data_co2, echo = T, results = 'hide'}
 get_hdr_data(country_or_aggregation = 'all_countries',
              apikey = HDR_API,
              indicator = 'co2_prod',
              query = 'detailed')
-
 ```
 
 
 Extract Adolescent Birth Rate and CO2 emissions for years 2014 and 2020 for Mauritius, Angola, and the United Arab Emirates
 
-```{r}
-
+```{r get_hdr_data_year, echo = T, results = 'hide'}
 get_hdr_data(country_or_aggregation = c('MUS', 'AGO', 'ARE'),
              apikey = HDR_API,
              year = c(2014, 2020),
@@ -82,8 +83,7 @@ get_hdr_data(country_or_aggregation = c('MUS', 'AGO', 'ARE'),
 
 Extract all indicators for Mauritius (iso3: MUS) in year 2014
 
-```{r}
-
+```{r get_hdr_data_mus, echo = T, results = 'hide'}
 get_hdr_data(country_or_aggregation = 'MUS',
              apikey = HDR_API,
              year = 2014)
@@ -92,11 +92,8 @@ get_hdr_data(country_or_aggregation = 'MUS',
 
 Since no data is available for the year 1950, the following query returns an empty list
 
-```{r get_hdr_data_empty}
-
+```{r get_hdr_data_empty, echo = T, results = 'hide'}
 get_hdr_data(country_or_aggregation = 'MUS',
              apikey = HDR_API,
              year = 1950)
-
 ```
-
